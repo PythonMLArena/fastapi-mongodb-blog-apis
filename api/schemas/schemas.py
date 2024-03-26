@@ -1,11 +1,8 @@
 from typing import Any
 import motor.motor_asyncio 
-import os
 from bson import ObjectId
 from dotenv import load_dotenv
-from typing import Annotated, Union
-from pydantic import BaseModel,Field,EmailStr, GetCoreSchemaHandler, GetJsonSchemaHandler 
-from pydantic import PlainSerializer, AfterValidator, WithJsonSchema
+from pydantic import BaseModel,Field,EmailStr 
 from pydantic_core import core_schema
 load_dotenv()
 
