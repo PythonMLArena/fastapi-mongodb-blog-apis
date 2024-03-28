@@ -28,7 +28,7 @@ def create_access_token(payload: Dict):
 
 def verify_access_token(token: str, credential_exception):
     try:
-        payload=jwt.decode(token,key="8xaR8r1nrDJwKSBiQ8rddnQ4ShV_mOqdlpFvQlcc",algorithm="HS256")
+        payload=jwt.decode(token,key="8xaR8r1nrDJwKSBiQ8rddnQ4ShV_mOqdlpFvQlcc")
         id: str = payload.get("id")
         if not id:
             raise credential_exception
@@ -37,7 +37,7 @@ def verify_access_token(token: str, credential_exception):
     except JWTError:
         raise credential_exception
         
-async def get_current_user(token: str):
+async def get_current_user(token: str= Depends(oauth2_scheme)):
     credential_exception=HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Token not found",

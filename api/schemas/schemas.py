@@ -75,3 +75,51 @@ class UserResponse(BaseModel):
 class TokenData(BaseModel):
     id: str 
     
+    
+class PasswordReset(BaseModel):
+    email: EmailStr
+    
+class NewPassword(BaseModel):
+    password: str
+    
+    
+class BlogContent(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId,alias="_id")
+    title : str = Field(...)
+    body : str = Field(...)
+    
+    
+    class Config:
+        allowed_population_by_field_name= True
+        arbitrary_type_allowed= True
+        json_encoders={ObjectId: str}
+        schema_extra={
+            "example":{
+                "title": "This is the title of the blog",
+                "body": "This is the body of the blog",
+            }
+        }
+    
+    
+class BlogContentResponse(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId,alias="_id")
+    title : str = Field(...)
+    body : str = Field(...)
+    auther_name : str = Field(...)
+    auther_id : str = Field(...)
+    created_at : str = Field(...)
+    
+    
+    class Config:
+        allowed_population_by_field_name= True
+        arbitrary_type_allowed= True
+        json_encoders={ObjectId: str}
+        schema_extra={
+            "example":{
+                "title": "This is the title of the blog",
+                "body": "This is the body of the blog",
+                "auther_name": "This is the auther name of the blog",
+                "auther_id": "This is the id of the auther",
+                "created_at": "date created",
+            }
+        }

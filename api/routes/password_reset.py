@@ -30,8 +30,13 @@ async def reset(token: str,new_password: NewPassword):
             if (update_user) is not None:
                 return update_user
             else:
-                return HTTPException()
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not found")
         else:
-            raise HTTPException()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="User not updated")
     existing_user=await db["users"].find_one({"_id":user["_id"]})
+    
+    if existing_user is not None:
+        return existing_user
+    
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
 
