@@ -49,11 +49,12 @@ async def get_blog_by_id(id: str,current_user=Depends(get_current_user)):
     
 @router.put("/{id}",response_description="Update Blog Here",response_model=BlogContentResponse)
 async def update_blog(id:str,blog_content: BlogContent,current_user=Depends(get_current_user)):
-    if blog_post := await db["blogPost"].find_one({"id":id}):
-        if blog_post["author_id"]==current_user["_id"]:
+    if blog_post := await db["blogPost"].find_one({"_id":id}):
+        if blog_post["auther_id"]==current_user["_id"]:
             try:
                 blog_content = {k:v for k,v in blog_content.dict().items() if v is not None}
                 if len(blog_content)>=1:
+                    blog_content["updated_at"]=str(datetime.utcnow())
                     update_blog_content=await db["blogPost"].update_one({"_id":id},{"$set":blog_content}) 
                     if update_blog_content.modified_count==1:
                         if (updated_blog_post := await db["blogPost"].find_one({"_id":id})) is not None:
@@ -72,16 +73,16 @@ async def update_blog(id:str,blog_content: BlogContent,current_user=Depends(get_
 @router.delete("/{id}",response_description="Delete post here")
 async def delete_blog(id: str,current_user=Depends(get_current_user)):
     if blog_post := await db["blogPost"].find_one({"_id":id}):
-        if blog_post["author_id"] == current_user["_id"]:
+        if blog_post["auther_id"] == current_user["_id"]:
             try:
                 delete_result = await db["blogPost"].delete_one({"_id":id})
                 if delete_result.deleted_count==1:
-                    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT,detail="Content not found")
+                    return HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail="Content not found")
             except Exception as e:
                 print(e)
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Internal Server Error")
         else:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="You are not authorized here to update the post")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="You are not authorized here to delete the post")
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Blog content not found")
             
     
